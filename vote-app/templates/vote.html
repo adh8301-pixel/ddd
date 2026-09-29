@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ poll.question }}{% endblock %}
+{% block heading %}{{ poll.question }}{% endblock %}
+{% block content %}
+  {% if closed %}
+    <p class="warning">투표가 마감되었습니다. ({{ poll.closes_at|display_time }})</p>
+  {% else %}
+    {% if poll.closes_at %}
+      <p class="deadline">마감: {{ poll.closes_at|display_time }}</p>
+    {% endif %}
+    <form method="post">
+      <fieldset>
+        <legend>선택지</legend>
+        {% for option in options %}
+          <label class="choice">
+            <input type="radio" name="option_id" value="{{ option.id }}" required
+                   {% if option.id == selected %}checked{% endif %}>
+            {{ option.label }}
+          </label>
+        {% endfor %}
+      </fieldset>
+
+      <label for="nickname">닉네임</label>
+      <input id="nickname" name="nickname" value="{{ nickname }}" maxlength="20" required>
+
+      <button type="submit">투표하기</button>
+    </form>
+  {% endif %}
+  <nav>
+    <a href="{{ url_for('results') }}">결과 보기</a>
+    <a href="{{ url_for('create') }}">새 투표 만들기</a>
+  </nav>
+{% endblock %}

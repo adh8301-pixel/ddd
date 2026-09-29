@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}투표 만들기{% endblock %}
+{% block heading %}투표 만들기{% endblock %}
+{% block content %}
+  {% if has_poll %}
+    <p class="warning">새 투표를 만들면 기존 투표와 결과가 삭제됩니다.</p>
+  {% endif %}
+  <form method="post">
+    <label for="question">질문</label>
+    <input id="question" name="question" value="{{ question }}" maxlength="200" required>
+
+    <fieldset>
+      <legend>선택지 (2~5개)</legend>
+      {% for value in options %}
+        <input name="option" value="{{ value }}" maxlength="100"
+               aria-label="선택지 {{ loop.index }}" placeholder="선택지 {{ loop.index }}"
+               {% if loop.index <= 2 %}required{% endif %}>
+      {% endfor %}
+    </fieldset>
+
+    <label for="closes_at">마감 시간 (선택)</label>
+    <input type="datetime-local" id="closes_at" name="closes_at"
+           value="{{ closes_at }}" min="{{ min_closes_at }}">
+    <p class="hint">비워 두면 마감 없이 계속 투표할 수 있습니다.</p>
+
+    {% if admin_required %}
+      <label for="admin_password">관리자 비밀번호</label>
+      <input type="password" id="admin_password" name="admin_password"
+             autocomplete="current-password" required>
+    {% endif %}
+
+    <button type="submit">만들기</button>
+  </form>
+  {% if has_poll %}
+    <nav><a href="{{ url_for('vote') }}">현재 투표로 돌아가기</a></nav>
+  {% endif %}
+{% endblock %}
